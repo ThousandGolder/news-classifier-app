@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">About News Classifier</h2>
+            </div>
+            <div class="card-body">
+                <h4>How It Works</h4>
+                <p>This application uses a machine learning model trained on the BBC News dataset to classify news articles into one of five categories:</p>
+                <ul>
+                    <li><strong>Business</strong>: Finance, markets, companies, economy</li>
+                    <li><strong>Entertainment</strong>: Movies, music, celebrities, arts</li>
+                    <li><strong>Politics</strong>: Government, elections, policies, legislation</li>
+                    <li><strong>Sport</strong>: Sports events, teams, athletes, matches</li>
+                    <li><strong>Tech</strong>: Technology, gadgets, software, innovation</li>
+                </ul>
+                
+                <h4>Technology Stack</h4>
+                <ul>
+                    <li><strong>Backend</strong>: Flask, Python</li>
+                    <li><strong>Machine Learning</strong>: Scikit-learn, Naive Bayes</li>
+                    <li><strong>Text Processing</strong>: NLTK, TF-IDF Vectorization</li>
+                    <li><strong>Frontend</strong>: Bootstrap, JavaScript</li>
+                </ul>
+                
+                <h4>Model Performance</h4>
+                <p>The classifier achieves <strong>99.1% accuracy</strong> on the test dataset and can handle articles with multiple category relevance.</p>
+                
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-primary">Try It Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

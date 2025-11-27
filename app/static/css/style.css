@@ -1,0 +1,728 @@
+/* General Styles */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding-top: 60px; /* Account for fixed navbar */
+    line-height: 1.6;
+}
+
+/* Card Styles */
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+}
+/* Enhanced Progress Bar Styles */
+.progress {
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #e9ecef;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.progress-bar {
+    font-size: 11px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.8s ease-in-out;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Remove border from last progress bar */
+.progress-bar:last-child {
+    border-right: none;
+}
+
+/* Category-specific progress bar enhancements */
+.progress-bar.bg-primary {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca) !important;
+}
+
+.progress-bar.bg-success {
+    background: linear-gradient(135deg, #198754, #146c43) !important;
+}
+
+.progress-bar.bg-warning {
+    background: linear-gradient(135deg, #ffc107, #e0a800) !important;
+    color: #000 !important;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5) !important;
+}
+
+.progress-bar.bg-info {
+    background: linear-gradient(135deg, #0dcaf0, #0aa2c0) !important;
+}
+
+.progress-bar.bg-secondary {
+    background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+}
+
+/* Progress bar animations */
+@keyframes slideIn {
+    from {
+        width: 0%;
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.progress-bar {
+    animation: slideIn 0.8s ease-out;
+}
+
+/* Staggered animation for multiple bars */
+.progress-bar:nth-child(1) { animation-delay: 0.1s; }
+.progress-bar:nth-child(2) { animation-delay: 0.2s; }
+.progress-bar:nth-child(3) { animation-delay: 0.3s; }
+.progress-bar:nth-child(4) { animation-delay: 0.4s; }
+.progress-bar:nth-child(5) { animation-delay: 0.5s; }
+
+/* Legend styles */
+.category-legend {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    margin-right: 8px;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile Progress Bar Styles */
+@media (max-width: 767.98px) {
+    .progress {
+        height: 20px;
+        border-radius: 8px;
+    }
+    
+    .progress-bar {
+        font-size: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Vertical progress bar container */
+    .vertical-progress-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .vertical-progress-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .vertical-progress-label {
+        min-width: 100px;
+        font-weight: bold;
+        font-size: 14px;
+    }
+    
+    .vertical-progress-bar {
+        flex: 1;
+        height: 20px;
+    }
+}
+
+/* Small text progress bars */
+@media (max-width: 991.98px) {
+    .progress-bar {
+        font-size: 10px;
+    }
+}
+
+/* Hover effects for progress bars */
+.progress-bar:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+/* Ensure text remains readable on small segments */
+.progress-bar {
+    min-width: fit-content;
+    padding: 0 5px;
+    white-space: nowrap;
+}
+
+/* Tooltip-like effect for very small segments */
+.progress-bar[style*="width: 0%"],
+.progress-bar[style*="width: 1%"],
+.progress-bar[style*="width: 2%"],
+.progress-bar[style*="width: 3%"],
+.progress-bar[style*="width: 4%"],
+.progress-bar[style*="width: 5%"] {
+    font-size: 0;
+}
+
+.progress-bar[style*="width: 0%"]::after,
+.progress-bar[style*="width: 1%"]::after,
+.progress-bar[style*="width: 2%"]::after,
+.progress-bar[style*="width: 3%"]::after,
+.progress-bar[style*="width: 4%"]::after,
+.progress-bar[style*="width: 5%"]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    opacity: 0.7;
+}
+
+/* Button Styles */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.btn:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(20, 20);
+        opacity: 0;
+    }
+}
+
+/* Form Styles */
+.form-control {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+    font-size: 16px; /* Better for mobile */
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    transform: translateY(-1px);
+}
+
+/* Alert Styles */
+.alert {
+    border: none;
+    border-radius: 10px;
+    border-left: 4px solid;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.alert-danger {
+    border-left-color: #dc3545;
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+}
+
+.alert-info {
+    border-left-color: #0dcaf0;
+    background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+}
+
+.alert-success {
+    border-left-color: #198754;
+    background: linear-gradient(135deg, #d1e7dd, #c3e6cb);
+}
+
+/* Table Styles */
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0;
+}
+
+.table th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    font-weight: 600;
+    padding: 15px 12px;
+}
+
+.table td {
+    padding: 12px;
+    vertical-align: middle;
+    border-color: #e9ecef;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(102, 126, 234, 0.05);
+    transform: scale(1.01);
+    transition: all 0.2s ease;
+}
+
+.table-success {
+    background: linear-gradient(135deg, #d1e7dd, #c3e6cb) !important;
+    font-weight: bold;
+}
+
+/* Badge Styles */
+.badge {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.badge.fs-6 {
+    padding: 0.5em 0.8em;
+}
+
+/* Article Preview */
+.article-preview {
+    line-height: 1.6;
+    color: #495057;
+    font-size: 14px;
+}
+
+/* Font Monospace for probabilities */
+.font-monospace {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+}
+
+/* Quick Stats Card */
+.quick-stats .col-4 {
+    padding: 15px 10px;
+}
+
+.quick-stats h5 {
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.quick-stats small {
+    font-size: 12px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Mobile Progress Bar Styles */
+@media (max-width: 767.98px) {
+    .progress {
+        height: 20px;
+        border-radius: 8px;
+    }
+    
+    .progress-bar {
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Vertical progress bar container */
+    .vertical-progress-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .vertical-progress-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .vertical-progress-label {
+        min-width: 100px;
+        font-weight: bold;
+        font-size: 14px;
+    }
+    
+    .vertical-progress-bar {
+        flex: 1;
+        height: 20px;
+    }
+    
+    /* Table improvements for mobile */
+    .table-responsive {
+        font-size: 14px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+    }
+    
+    .table th, .table td {
+        padding: 10px 8px;
+    }
+    
+    /* Card adjustments for mobile */
+    .card-body {
+        padding: 1.25rem;
+    }
+    
+    /* Alert adjustments */
+    .alert .row {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .alert .col-md-4 {
+        margin-top: 10px;
+    }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 575.98px) {
+    body {
+        padding-top: 30px;
+    }
+    
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+    
+    .card-header h2, .card-header h3 {
+        font-size: 1.3rem;
+    }
+    
+    .btn-lg {
+        padding: 12px 20px;
+        font-size: 16px;
+    }
+    
+    /* Make form elements larger on mobile */
+    .form-control {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    /* Stack badges vertically on mobile */
+    .badge {
+        margin: 2px;
+        font-size: 0.7rem;
+    }
+    
+    /* Quick stats adjustments */
+    .quick-stats .col-4 {
+        padding: 10px 5px;
+    }
+    
+    .quick-stats h5 {
+        font-size: 1.1rem;
+    }
+    
+    .quick-stats .fa-2x {
+        font-size: 1.5em !important;
+    }
+    
+    /* Button group adjustments */
+    .d-md-flex .btn {
+        margin-bottom: 10px;
+    }
+    
+    /* Article preview adjustments */
+    .article-preview {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+}
+
+/* Animation for progress bars */
+@keyframes slideIn {
+    from {
+        width: 0%;
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.progress-bar {
+    animation: slideIn 0.8s ease-out;
+}
+
+/* Loading animation */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #764ba2;
+}
+
+/* Category color coding for icons */
+.text-business { color: #0d6efd !important; }
+.text-entertainment { color: #198754 !important; }
+.text-politics { color: #ffc107 !important; }
+.text-sport { color: #0dcaf0 !important; }
+.text-tech { color: #6c757d !important; }
+
+/* Collapse animation */
+.collapse {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Ripple effect for buttons */
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.7);
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+}
+
+/* Focus styles for accessibility */
+.btn:focus,
+.form-control:focus,
+.form-select:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+    .navbar,
+    .btn,
+    .alert .col-md-4 {
+        display: none !important;
+    }
+    
+    body {
+        padding-top: 0;
+    }
+    
+    .card {
+        box-shadow: none;
+        border: 1px solid #dee2e6;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .card {
+        border: 2px solid #000;
+    }
+    
+    .btn {
+        border: 2px solid;
+    }
+    
+    .progress-bar {
+        border: 1px solid #000;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .progress-bar {
+        animation: none;
+    }
+}
+
+/* Health Page Styles */
+.health-status {
+    border-left: 4px solid;
+    padding-left: 15px;
+}
+
+.health-status.healthy {
+    border-left-color: #198754;
+    background: linear-gradient(135deg, #d1e7dd, #c3e6cb);
+}
+
+.health-status.unhealthy {
+    border-left-color: #dc3545;
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+}
+
+.system-metric {
+    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.system-metric:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.system-metric i {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.system-metric h3 {
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.system-metric p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+/* Code blocks in health page */
+code {
+    background: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #e83e8c;
+}
+
+/* List group improvements */
+.list-group-item {
+    border: none;
+    padding: 12px 15px;
+    margin-bottom: 5px;
+    border-radius: 8px !important;
+    background: #f8f9fa;
+}
+
+.list-group-item:hover {
+    background: #e9ecef;
+}
+
+/* Badge improvements */
+.badge {
+    font-weight: 500;
+}
+
+/* Mobile responsiveness for health page */
+@media (max-width: 768px) {
+    .system-metric {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .system-metric i {
+        font-size: 2rem;
+    }
+    .row{
+        gap: 50px;
+    }
+    
+    .health-status {
+        padding-left: 10px;
+    }
+}

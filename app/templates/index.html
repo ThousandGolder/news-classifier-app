@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">News Article Classifier</h2>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Enter a news article text below to classify it into one of these categories: 
+                    <span class="badge bg-primary">Business</span>
+                    <span class="badge bg-success">Entertainment</span>
+                    <span class="badge bg-warning">Politics</span>
+                    <span class="badge bg-info">Sport</span>
+                    <span class="badge bg-secondary">Tech</span>
+                </p>
+                
+                <form method="POST" action="{{ url_for('main.classify') }}">
+                    <div class="mb-3">
+                        <label for="article_text" class="form-label">News Article Text:</label>
+                        <textarea class="form-control" id="article_text" name="article_text" 
+                                  rows="8" placeholder="Paste your news article here..." 
+                                  required></textarea>
+                        <div class="form-text">Enter at least 50 characters for better accuracy.</div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            🎯 Classify Article
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-4">
+                    <h5>Example Articles:</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-outline-secondary btn-sm example-btn" 
+                                data-text="The stock market reached record highs today as tech companies reported strong earnings and investors showed confidence in the economic recovery.">
+                            Business Example
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm example-btn"
+                                data-text="The football team won the championship after an exciting final match that went into overtime with spectacular goals from both sides.">
+                            Sports Example
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm example-btn"
+                                data-text="New smartphone features including advanced AI cameras and foldable screens were unveiled at the technology conference in Las Vegas.">
+                            Tech Example
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
