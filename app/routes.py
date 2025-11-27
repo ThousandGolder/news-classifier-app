@@ -17,13 +17,31 @@ MODEL_PATH = os.path.join(BASE_DIR, 'app', 'models', 'news_classifier_naive_baye
 
 print(f"🔍 Looking for model at: {MODEL_PATH}")
 
-# Initialize classifier
+# Initialize classifier with verification
 try:
+    MODEL_PATH = 'app/models/news_classifier_naive_bayes.pkl'
+    
     if os.path.exists(MODEL_PATH):
+        print("🔍 Loading model...")
         model = joblib.load(MODEL_PATH)
-        MODEL_LOADED = True
-        print("✅ Model loaded successfully!")
-        print(f"📊 Model classes: {model.classes_}")
+        
+        # Verify the model components are properly loaded
+        try:
+            # Test if vectorizer is fitted by trying a simple transform
+            test_text = "test business"
+            _ = model.named_steps['tfidf'].transform([test_text])
+            
+            # Test if classifier works
+            _ = model.predict([test_text])
+            
+            MODEL_LOADED = True
+            print("✅ Model loaded and verified successfully!")
+            print(f"📊 Model classes: {model.classes_}")
+            
+        except Exception as e:
+            print(f"❌ Model verification failed: {e}")
+            MODEL_LOADED = False
+            
     else:
         MODEL_LOADED = False
         print(f"❌ Model file not found at: {MODEL_PATH}")
@@ -35,9 +53,12 @@ try:
                 print(f"   - {f}")
         else:
             print("❌ Models directory doesn't exist")
+        
 except Exception as e:
     MODEL_LOADED = False
     print(f"❌ Error loading model: {e}")
+    import traceback
+    traceback.print_exc()
 
 def preprocess_text(text):
     """Basic text preprocessing"""
@@ -141,7 +162,7 @@ def health():
                              model_info=None,
                              system_info=None)
     
-    # Model information (without sensitive paths)
+    # Model information (without accessing potentially un-fitted vectorizer)
     model_info = {
         'name': 'BBC News Classifier',
         'algorithm': type(model.named_steps['model']).__name__,
@@ -149,16 +170,21 @@ def health():
         'categories_count': len(model.classes_),
         'model_type': 'Naive Bayes Classifier',
         'vectorizer': 'TF-IDF Vectorizer',
-        'features_count': len(model.named_steps['tfidf'].get_feature_names_out()),
         'accuracy_estimate': '99.1% (on test data)'
     }
     
-    # System information (without sensitive paths)
+    # Only try to get feature count if vectorizer is fitted
+    try:
+        model_info['features_count'] = len(model.named_steps['tfidf'].get_feature_names_out())
+    except:
+        model_info['features_count'] = 'Unknown (vectorizer not fitted)'
+    
+    # System information
     import sys
     
     system_info = {
-        'python_version': sys.version.split()[0],  # Just version number
-        'platform': platform.system(),  # Just OS name, not full path
+        'python_version': sys.version.split()[0],
+        'platform': platform.system(),
         'server_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         'flask_version': '2.3.3'
     }
@@ -186,7 +212,34 @@ def api_health():
     
     return jsonify(health_data)
 
-# Debug route to check model status (remove this in production)
+@bp.route('/model-debug')
+def model_debug():
+    """Debug route to check model state"""
+    debug_info = {
+        'model_loaded': MODEL_LOADED,
+        'model_path': MODEL_PATH,
+        'model_exists': os.path.exists(MODEL_PATH)
+    }
+    
+    if MODEL_LOADED:
+        debug_info.update({
+            'has_tfidf': 'tfidf' in model.named_steps,
+            'has_model': 'model' in model.named_steps,
+            'classes': model.classes_.tolist() if hasattr(model, 'classes_') else None
+        })
+        
+        # Check vectorizer state
+        if 'tfidf' in model.named_steps:
+            tfidf = model.named_steps['tfidf']
+            debug_info.update({
+                'tfidf_has_vocabulary': hasattr(tfidf, 'vocabulary_'),
+                'tfidf_has_idf': hasattr(tfidf, 'idf_'),
+                'tfidf_has_feature_names': hasattr(tfidf, 'get_feature_names_out')
+            })
+    
+    return jsonify(debug_info)
+
+# Debug route to check model status
 @bp.route('/debug')
 def debug():
     return jsonify({
