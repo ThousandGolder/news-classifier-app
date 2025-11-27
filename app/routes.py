@@ -359,4 +359,4 @@ def api_predict():
         return jsonify({
             'error': f'Prediction failed: {str(e)}',
             'success': False
-        }), 500
+        }), 500 
