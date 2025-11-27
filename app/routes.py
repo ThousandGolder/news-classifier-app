@@ -16,47 +16,103 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_PATH = os.path.join(BASE_DIR, 'app', 'models', 'news_classifier_naive_bayes.pkl')
 
 print(f"🔍 Looking for model at: {MODEL_PATH}")
+print(f"📁 Current directory: {os.getcwd()}")
+print(f"📁 Base directory: {BASE_DIR}")
 
-# Initialize classifier with verification
+# Initialize classifier with comprehensive debugging
+MODEL_LOADED = False
+model = None
+
 try:
-    MODEL_PATH = 'app/models/news_classifier_naive_bayes.pkl'
+    # Try multiple possible paths
+    possible_paths = [
+        MODEL_PATH,
+        'app/models/news_classifier_naive_bayes.pkl',
+        './app/models/news_classifier_naive_bayes.pkl',
+        os.path.join(os.getcwd(), 'app', 'models', 'news_classifier_naive_bayes.pkl')
+    ]
     
-    if os.path.exists(MODEL_PATH):
-        print("🔍 Loading model...")
-        model = joblib.load(MODEL_PATH)
+    loaded_path = None
+    for path in possible_paths:
+        print(f"🔍 Trying path: {path}")
+        if os.path.exists(path):
+            print(f"✅ File found at: {path}")
+            model = joblib.load(path)
+            loaded_path = path
+            break
+        else:
+            print(f"❌ File not found at: {path}")
+    
+    if model is not None:
+        print("✅ Model file loaded successfully")
         
-        # Verify the model components are properly loaded
-        try:
-            # Test if vectorizer is fitted by trying a simple transform
-            test_text = "test business"
-            _ = model.named_steps['tfidf'].transform([test_text])
+        # Debug: Check model structure
+        print(f"📊 Model type: {type(model)}")
+        if hasattr(model, 'named_steps'):
+            print(f"📊 Model steps: {list(model.named_steps.keys())}")
+        
+        # Check if it's a pipeline
+        if hasattr(model, 'named_steps') and 'tfidf' in model.named_steps:
+            tfidf = model.named_steps['tfidf']
+            print("✅ TF-IDF component found")
             
-            # Test if classifier works
-            _ = model.predict([test_text])
+            # Check TF-IDF state
+            print(f"📊 TF-IDF has vocabulary: {hasattr(tfidf, 'vocabulary_')}")
+            print(f"📊 TF-IDF has idf_: {hasattr(tfidf, 'idf_')}")
+            print(f"📊 TF-IDF has get_feature_names_out: {hasattr(tfidf, 'get_feature_names_out')}")
+            
+            # Test vectorizer
+            try:
+                test_text = "business company profit"
+                print("🧪 Testing vectorizer transform...")
+                result = tfidf.transform([test_text])
+                print(f"✅ Vectorizer transform successful - shape: {result.shape}")
+            except Exception as e:
+                print(f"❌ Vectorizer transform failed: {e}")
+        
+        # Check classifier
+        if hasattr(model, 'named_steps') and 'model' in model.named_steps:
+            classifier = model.named_steps['model']
+            print("✅ Classifier component found")
+            print(f"📊 Classifier has classes_: {hasattr(classifier, 'classes_')}")
+            
+            if hasattr(classifier, 'classes_'):
+                print(f"📊 Model classes: {classifier.classes_}")
+        
+        # Test full prediction
+        try:
+            test_text = "business company profit"
+            print("🧪 Testing full prediction...")
+            prediction = model.predict([test_text])
+            probability = model.predict_proba([test_text])
+            print(f"✅ Full prediction successful: {prediction[0]}")
+            print(f"📊 Probability shape: {probability.shape}")
             
             MODEL_LOADED = True
-            print("✅ Model loaded and verified successfully!")
-            print(f"📊 Model classes: {model.classes_}")
+            print("🎉 Model fully loaded and verified!")
             
         except Exception as e:
-            print(f"❌ Model verification failed: {e}")
-            MODEL_LOADED = False
+            print(f"❌ Full prediction failed: {e}")
+            import traceback
+            traceback.print_exc()
             
     else:
-        MODEL_LOADED = False
-        print(f"❌ Model file not found at: {MODEL_PATH}")
-        # List files in models directory
-        models_dir = os.path.join(BASE_DIR, 'app', 'models')
-        if os.path.exists(models_dir):
-            print("📁 Files in models directory:")
-            for f in os.listdir(models_dir):
-                print(f"   - {f}")
-        else:
-            print("❌ Models directory doesn't exist")
+        print("❌ No model file found in any location")
+        # List directory contents for debugging
+        print("📁 Current directory contents:")
+        for item in os.listdir('.'):
+            print(f"   - {item}")
+        if os.path.exists('app'):
+            print("📁 App directory contents:")
+            for item in os.listdir('app'):
+                print(f"   - {item}")
+            if os.path.exists('app/models'):
+                print("📁 Models directory contents:")
+                for item in os.listdir('app/models'):
+                    print(f"   - {item}")
         
 except Exception as e:
-    MODEL_LOADED = False
-    print(f"❌ Error loading model: {e}")
+    print(f"❌ Error during model loading: {e}")
     import traceback
     traceback.print_exc()
 
@@ -162,7 +218,7 @@ def health():
                              model_info=None,
                              system_info=None)
     
-    # Model information (without accessing potentially un-fitted vectorizer)
+    # Model information
     model_info = {
         'name': 'BBC News Classifier',
         'algorithm': type(model.named_steps['model']).__name__,
@@ -177,7 +233,7 @@ def health():
     try:
         model_info['features_count'] = len(model.named_steps['tfidf'].get_feature_names_out())
     except:
-        model_info['features_count'] = 'Unknown (vectorizer not fitted)'
+        model_info['features_count'] = 'Unknown'
     
     # System information
     import sys
@@ -218,32 +274,43 @@ def model_debug():
     debug_info = {
         'model_loaded': MODEL_LOADED,
         'model_path': MODEL_PATH,
-        'model_exists': os.path.exists(MODEL_PATH)
+        'model_exists': os.path.exists(MODEL_PATH),
+        'current_directory': os.getcwd(),
+        'base_directory': BASE_DIR
     }
     
     if MODEL_LOADED:
         debug_info.update({
-            'has_tfidf': 'tfidf' in model.named_steps,
-            'has_model': 'model' in model.named_steps,
+            'has_named_steps': hasattr(model, 'named_steps'),
+            'model_type': str(type(model)),
             'classes': model.classes_.tolist() if hasattr(model, 'classes_') else None
         })
         
-        # Check vectorizer state
-        if 'tfidf' in model.named_steps:
-            tfidf = model.named_steps['tfidf']
-            debug_info.update({
-                'tfidf_has_vocabulary': hasattr(tfidf, 'vocabulary_'),
-                'tfidf_has_idf': hasattr(tfidf, 'idf_'),
-                'tfidf_has_feature_names': hasattr(tfidf, 'get_feature_names_out')
-            })
+        if hasattr(model, 'named_steps'):
+            debug_info['steps'] = list(model.named_steps.keys())
+            
+            if 'tfidf' in model.named_steps:
+                tfidf = model.named_steps['tfidf']
+                debug_info.update({
+                    'tfidf_has_vocabulary': hasattr(tfidf, 'vocabulary_'),
+                    'tfidf_has_idf': hasattr(tfidf, 'idf_'),
+                    'tfidf_type': str(type(tfidf))
+                })
+            
+            if 'model' in model.named_steps:
+                clf = model.named_steps['model']
+                debug_info.update({
+                    'classifier_type': str(type(clf)),
+                    'classifier_has_classes': hasattr(clf, 'classes_')
+                })
     
     return jsonify(debug_info)
 
-# Debug route to check model status
 @bp.route('/debug')
 def debug():
     return jsonify({
         'model_loaded': MODEL_LOADED,
         'model_exists': os.path.exists(MODEL_PATH),
-        'current_directory': os.getcwd()
+        'current_directory': os.getcwd(),
+        'base_directory': BASE_DIR
     })
